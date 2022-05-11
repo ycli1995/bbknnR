@@ -1,0 +1,56 @@
+---
+title: "bbknnR Tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bbknnR-tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+date: 'Compiled: `r Sys.Date()`'
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Setup library and data
+```{r setup}
+library(bbknnR)
+library(Seurat)
+library(dplyr)
+library(patchwork)
+data("panc8_small")
+```
+
+## Run BBKNN
+Note that `RunBBKNN()` also compute t-SNE and UMAP by default.
+```{r runbbknn}
+panc8_small <- RunBBKNN(panc8_small, batch_key = "tech")
+```
+
+## Find Clusters using bbknn graph
+```{r clustering}
+panc8_small <- FindClusters(panc8_small, graph.name = "bbknn")
+```
+
+## Visualization
+```{r umap, fig.width=5, fig.height=10}
+p1 <- DimPlot(panc8_small, reduction = "umap", group.by = "celltype", label = TRUE,
+             label.size = 3 , repel = TRUE) + NoLegend()
+p2 <- DimPlot(panc8_small, reduction = "umap", group.by = "tech")
+p3 <- DimPlot(panc8_small, reduction = "umap")
+
+wrap_plots(list(p1, p2, p3), ncol = 1)
+```
+
+```{r tsne, fig.width=5, fig.height=10}
+p1 <- DimPlot(panc8_small, reduction = "tsne", group.by = "celltype", label = TRUE,
+             label.size = 3 , repel = TRUE) + NoLegend()
+p2 <- DimPlot(panc8_small, reduction = "tsne", group.by = "tech")
+p3 <- DimPlot(panc8_small, reduction = "tsne")
+
+wrap_plots(list(p1, p2, p3), ncol = 1)
+```
+
