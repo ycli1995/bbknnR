@@ -26,6 +26,7 @@ RunBBKNN <- function(object, ...) {
   UseMethod(generic = 'RunBBKNN', object = object)
 }
 
+#' @param batch_list A character vector with the same length as nrow(pca)
 #' @param n_pcs Number of dimensions to use. Default is 50.
 #' @param neighbors_within_batch How many top neighbours to report for each batch; 
 #' total number of neighbours in the initial k-nearest-neighbours computation will 
@@ -70,7 +71,7 @@ RunBBKNN.default <- function(
   n_pcs = 50L,
   neighbors_within_batch = 3L,
   trim = NULL,
-  approx = FALSE,
+  approx = TRUE,
   use_annoy = TRUE, 
   annoy_n_trees = 10L,
   pynndescent_n_neighbors = 30L, 
@@ -79,7 +80,8 @@ RunBBKNN.default <- function(
   metric = "euclidean",
   set_op_mix_ratio = 1,
   local_connectivity = 1,
-  seed = 42
+  seed = 42,
+  ...
 ) {
   batches <- unique(x = batch_list)
   trim <- trim %||% neighbors_within_batch * length(x = batches) * 10
@@ -163,10 +165,6 @@ RunBBKNN.default <- function(
 #' 
 #' @return Returns a Seurat object containing a new BBKNN Graph. If run t-SNE or UMAP, will 
 #' also return corresponded reduction objects.
-#' 
-#' @examples
-#' data("panc8_small")
-#' panc8_small <- RunBBKNN(panc8_small, "tech")
 #' 
 #' @import Seurat SeuratObject uwot Rtsne
 #' 
@@ -345,7 +343,7 @@ bbknn_annoy <- function(
     knn_dist[i, ] <- knn_dist[i, ][order(knn_dist[i, ])]
   }
   out <- compute_connectivities_umap(
-    knn_ind = knn_index,
+    knn_index = knn_index,
     knn_dist = knn_dist,
     n_obs = nrow(x = knn_index),
     n_neighbors = ncol(x = knn_index),
@@ -383,6 +381,15 @@ query_annoy_tree <- function(query, ckd, k = 3) {
   return(list(index = index + 1L, dist = dist))
 }
 
+# fuzzy_simplicial_set
+#
+# Export fuzzy_simplicial_set() function from \code{uwot}
+#
+#' @import uwot
+#' @importFrom utils getFromNamespace
+#' 
+fuzzy_simplicial_set <- getFromNamespace(x = "fuzzy_simplicial_set", ns = "uwot")
+
 # Compute connectivities using UMAP
 # 
 # @param knn_index KNN index matrix
@@ -410,7 +417,7 @@ compute_connectivities_umap <- function(
   if (!is.null(x = seed)) {
     set.seed(seed)
   }
-  cnts <- uwot:::fuzzy_simplicial_set(
+  cnts <- fuzzy_simplicial_set(
     nn = list(idx = knn_index, dist = knn_dist),
     set_op_mix_ratio = set_op_mix_ratio,
     local_connectivity = local_connectivity

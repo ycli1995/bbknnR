@@ -87,6 +87,9 @@ RidgeRegression.default <- function(
   return(resid_data)
 }
 
+#' @param assay Name of Assay ridge regression is being run on
+#' @param features Features to compute ridge regression on. If features=NULL, ridge regression 
+#' will be run using the variable features for the Assay. 
 #' @param run_pca Whether or not to run pca with regressed expression data (TRUE by default)
 #' @param npcs Total Number of PCs to compute and store (50 by default)
 #' @param reduction.name Dimensional reduction name (pca by default)
@@ -95,11 +98,6 @@ RidgeRegression.default <- function(
 #' @param replace Whether or not to replace original scale.data with regressed expression data (TRUE by default)
 #' 
 #' @return Returns a Seurat object.
-#' 
-#' @examples
-#' data("panc8_small")
-#' panc8_small <- RidgeRegression(panc8_small, c("tech", "dataset"), "celltype")
-#' panc8_small <- RunBBKNN(panc8_small, "tech")
 #' 
 #' @import Seurat SeuratObject
 #' 
@@ -127,7 +125,9 @@ RidgeRegression.Seurat <- function(
     warning("At least one of 'run_pca' or 'replace' should be set up.\nReturn the original object", immediate. = TRUE)
     return(object)
   }
-  data.expr <- GetAssayData(object = object, assay = assay, slot = "scale.data")[features, ]
+  data.expr <- GetAssayData(object = object, assay = assay, slot = "scale.data")
+  features <- intersect(x = features, y = rownames(x = data.expr))
+  data.expr <- data.expr[features, ]
   latent_data <- object@meta.data[, c(batch_key, confounder_key), drop = FALSE]
   data.resid <- RidgeRegression(
     object = data.expr,

@@ -20,6 +20,6 @@
 #'   \item{version}{Seurat version used to create the object}
 #'   \item{commands}{Command history}
 #' }
-#' @source SeuratData \url{http://seurat.nygenome.org/src/contrib/panc8.SeuratData_3.0.2.tar.gz}
+#' @source SeuratData \url{https://github.com/satijalab/seurat-data}
 #'
 "panc8_small"

@@ -52,6 +52,11 @@ column names of latent_data}
 \item{seed}{Set a random seed. By default, sets the seed to 42. Setting NULL will not set 
 a seed.}
 
+\item{assay}{Name of Assay ridge regression is being run on}
+
+\item{features}{Features to compute ridge regression on. If features=NULL, ridge regression 
+will be run using the variable features for the Assay.}
+
 \item{run_pca}{Whether or not to run pca with regressed expression data (TRUE by default)}
 
 \item{npcs}{Total Number of PCs to compute and store (50 by default)}
@@ -71,12 +76,6 @@ Perform ridge regression on scaled expression data, accepting both technical
 and biological categorical variables. The effect of the technical variables 
 is removed while the effect of the biological variables is retained. This is 
 a preprocessing step that can aid BBKNN integration.
-}
-\examples{
-data("panc8_small")
-panc8_small <- RidgeRegression(panc8_small, c("tech", "dataset"), "celltype")
-panc8_small <- RunBBKNN(panc8_small, "tech")
-
 }
 \references{
 Park, Jong-Eun, et al. "A cell atlas of human thymic development defines T 

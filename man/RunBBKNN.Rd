@@ -14,7 +14,7 @@ RunBBKNN(object, ...)
   n_pcs = 50L,
   neighbors_within_batch = 3L,
   trim = NULL,
-  approx = FALSE,
+  approx = TRUE,
   use_annoy = TRUE,
   annoy_n_trees = 10L,
   pynndescent_n_neighbors = 30L,
@@ -23,7 +23,8 @@ RunBBKNN(object, ...)
   metric = "euclidean",
   set_op_mix_ratio = 1,
   local_connectivity = 1,
-  seed = 42
+  seed = 42,
+  ...
 )
 
 \method{RunBBKNN}{Seurat}(
@@ -51,6 +52,8 @@ RunBBKNN(object, ...)
 \item{object}{An object}
 
 \item{...}{Arguments passed to other methods}
+
+\item{batch_list}{A character vector with the same length as nrow(pca)}
 
 \item{n_pcs}{Number of dimensions to use. Default is 50.}
 
@@ -134,11 +137,6 @@ Batch balanced KNN, altering the KNN procedure to identify each cell’s top nei
 in each batch separately instead of the entire cell pool with no accounting for batch. 
 The nearest neighbours for each batch are then merged to create a final list of neighbours 
 for the cell. Aligns batches in a quick and lightweight manner.
-}
-\examples{
-data("panc8_small")
-panc8_small <- RunBBKNN(panc8_small, "tech")
-
 }
 \references{
 Polański, Krzysztof, et al. "BBKNN: fast batch alignment of single cell 

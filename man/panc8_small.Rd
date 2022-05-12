@@ -25,7 +25,7 @@ A Seurat object with the following slots filled
 }
 }
 \source{
-SeuratData \url{http://seurat.nygenome.org/src/contrib/panc8.SeuratData_3.0.2.tar.gz}
+SeuratData \url{https://github.com/satijalab/seurat-data}
 }
 \usage{
 panc8_small
