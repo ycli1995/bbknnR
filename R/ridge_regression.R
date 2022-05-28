@@ -33,6 +33,7 @@ RidgeRegression <- function(object, ...) {
 #' @param lambda A user supplied lambda sequence. pass to \code{\link[glmnet]{glmnet}}
 #' @param seed Set a random seed. By default, sets the seed to 42. Setting NULL will not set 
 #' a seed.
+#' @param verbose Whether or not to print output to the console
 #' 
 #' @import glmnet tidytable
 #' 
@@ -46,10 +47,13 @@ RidgeRegression.default <- function(
   confounder_key,
   lambda = 1,
   seed = 42,
+  verbose = TRUE,
   ...
 ) {
   latent_data <- latent_data[, c(batch_key, confounder_key), drop = FALSE]
-  cat("Running ridge regression...\n")
+  if (verbose) {
+    cat("Running ridge regression...\n")
+  }
   if (!is.null(x = seed)) {
     set.seed(seed = seed)
   }
@@ -117,6 +121,7 @@ RidgeRegression.Seurat <- function(
   reduction.key = "PC_",
   replace = FALSE,
   seed = 42,
+  verbose = TRUE,
   ...
 ) {
   assay <- assay %||% DefaultAssay(object = object)
@@ -136,14 +141,19 @@ RidgeRegression.Seurat <- function(
     confounder_key = confounder_key,
     lambda = lambda,
     seed = seed,
+    verbose = verbose,
     ...
   )
   if (replace) {
-    cat("Replace original scale.data...\n")
+    if (verbose) {
+      cat("Replace original scale.data...\n")
+    }
     object <- SetAssayData(object = object, assay = assay, slot = "scale.data", new.data = data.resid)
   }
   if (run_pca) {
-    cat("Running PCA...\n")
+    if (verbose) {
+      cat("Running PCA...\n")
+    }
     pca <- RunPCA(
       object = data.resid, 
       assay = assay,

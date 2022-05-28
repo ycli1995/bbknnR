@@ -6,7 +6,7 @@
 \alias{bbknnR-package}
 \title{bbknnR: Perform Batch Balanced KNN in R}
 \description{
-'BBKNN' is a fast and intuitive batch effect removal tool for single-cell data. It is originally used in the 'scanpy' python package, and now can be used with 'Seurat' seamlessly.
+A fast and intuitive batch effect removal tool for single-cell data. BBKNN is originally used in the 'scanpy' python package, and now can be used with 'Seurat' seamlessly.
 }
 \seealso{
 Useful links:

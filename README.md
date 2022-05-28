@@ -13,7 +13,11 @@ pip install bbknn
 ```
 
 ### Installation
-Currently `bbknnR` can only be installed with github:
+`bbknnR` has been released to CRAN:
+```
+install.packages("bbknnR")
+```
+or can be installed from github:
 ```
 devtools::install_github("ycli1995/bbknnR")
 ```
@@ -25,6 +29,10 @@ library(Seurat)
 data("panc8_small")
 panc8_small <- RunBBKNN(panc8_small, batch_key = "tech")
 ```
+
+## Release
+### 1.0.0
+* Initially released to CRAN
 
 ## Citation
 Please cite this implementation R in if you use it:

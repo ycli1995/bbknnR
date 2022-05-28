@@ -15,6 +15,7 @@ RidgeRegression(object, ...)
   confounder_key,
   lambda = 1,
   seed = 42,
+  verbose = TRUE,
   ...
 )
 
@@ -31,6 +32,7 @@ RidgeRegression(object, ...)
   reduction.key = "PC_",
   replace = FALSE,
   seed = 42,
+  verbose = TRUE,
   ...
 )
 }
@@ -51,6 +53,8 @@ column names of latent_data}
 
 \item{seed}{Set a random seed. By default, sets the seed to 42. Setting NULL will not set 
 a seed.}
+
+\item{verbose}{Whether or not to print output to the console}
 
 \item{assay}{Name of Assay ridge regression is being run on}
 

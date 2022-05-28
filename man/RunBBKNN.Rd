@@ -24,6 +24,7 @@ RunBBKNN(object, ...)
   set_op_mix_ratio = 1,
   local_connectivity = 1,
   seed = 42,
+  verbose = TRUE,
   ...
 )
 
@@ -45,6 +46,7 @@ RunBBKNN(object, ...)
   min_dist = 0.3,
   spread = 1,
   seed = 42,
+  verbose = TRUE,
   ...
 )
 }
@@ -100,6 +102,8 @@ neighbour algorithm. "euclidean", the default, is always available.}
 
 \item{seed}{Set a random seed. By default, sets the seed to 42. Setting NULL will 
 not set a seed.}
+
+\item{verbose}{Whether or not to print output to the console}
 
 \item{batch_key}{Column name in meta.data discriminating between your batches.}
 

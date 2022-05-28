@@ -60,6 +60,7 @@ RunBBKNN <- function(object, ...) {
 #' @param local_connectivity Pass to 'local_connectivity' parameter for \code{\link[uwot]{umap}}
 #' @param seed Set a random seed. By default, sets the seed to 42. Setting NULL will 
 #' not set a seed.
+#' @param verbose Whether or not to print output to the console
 #' 
 #' @import reticulate methods Matrix
 #' 
@@ -81,13 +82,16 @@ RunBBKNN.default <- function(
   set_op_mix_ratio = 1,
   local_connectivity = 1,
   seed = 42,
+  verbose = TRUE,
   ...
 ) {
   batches <- unique(x = batch_list)
   trim <- trim %||% neighbors_within_batch * length(x = batches) * 10
   
   if (approx && use_annoy) {
-    cat("Running BBKNN using RcppAnnoy...\n")
+    if (verbose) {
+      cat("Running BBKNN using RcppAnnoy...\n")
+    }
     out <- bbknn_annoy(
       pca = object, 
       batch_list = batch_list,
@@ -100,11 +104,15 @@ RunBBKNN.default <- function(
       local_connectivity = local_connectivity
     )
   } else {
-    cat("Checking python modules...\n")
+    if (verbose) {
+      cat("Checking python modules...\n")
+    }
     if (!py_module_available(module = "bbknn")){
       stop("Cannot find bbknn, please install through pip (e.g. pip install bbknn).")
     }
-    cat("Running BBKNN via python...\n")
+    if (verbose) {
+      cat("Running BBKNN via python...\n")
+    }
     bbknn <- import(module = "bbknn", convert = FALSE)
     bbknn_out <- bbknn$bbknn_matrix(
       object, 
@@ -122,7 +130,9 @@ RunBBKNN.default <- function(
       set_op_mix_ratio = set_op_mix_ratio,
       local_connectivity = local_connectivity
     )
-    cat("Getting BBKNN Graph and distances...\n")
+    if (verbose) {
+      cat("Getting BBKNN Graph and distances...\n")
+    }
     bbknn_cnts <- new(
       Class = "dgCMatrix",
       i = as.vector(py_to_r(bbknn_out[[1]]$indices)),
@@ -143,7 +153,9 @@ RunBBKNN.default <- function(
     rownames(x = out$cnts) <- colnames(x = out$cnts) <- rownames(x = object)
     rownames(x = out$dist) <- colnames(x = out$dist) <- rownames(x = object)
   }
-  cat("BBKNN finish!\n")
+  if (verbose) {
+    cat("BBKNN finish!\n")
+  }
   return(out)
 }
 
@@ -188,6 +200,7 @@ RunBBKNN.Seurat <- function(
   min_dist = 0.3,
   spread = 1,
   seed = 42,
+  verbose = TRUE,
   ...
 ) {
   assay <- assay %||% DefaultAssay(object = object)
@@ -198,6 +211,7 @@ RunBBKNN.Seurat <- function(
     batch_list,
     n_pcs = n_pcs,
     seed = seed,
+    verbose = verbose,
     ...
   )
   bbknn_out$cnts <- as.Graph(x = bbknn_out$cnts)
@@ -209,7 +223,9 @@ RunBBKNN.Seurat <- function(
       set.seed(seed = seed)
     }
     if (run_UMAP) {
-      cat("Running UMAP...\n")
+      if (verbose) {
+        cat("Running UMAP...\n")
+      }
       umap <- umap(
         X = embeddings,
         n_neighbors = ncol(x = bbknn$idx),
@@ -228,7 +244,9 @@ RunBBKNN.Seurat <- function(
       )
     }
     if (run_TSNE) {
-      cat("Running tSNE...\n")
+      if (verbose) {
+        cat("Running tSNE...\n")
+      }
       perplexity <- ncol(x = bbknn$idx) - 1
       tsne <- Rtsne_neighbors(
         index = bbknn$idx,
@@ -244,7 +262,9 @@ RunBBKNN.Seurat <- function(
       )
     }
   }
-  cat("All done!\n")
+  if (verbose) {
+    cat("All done!\n")
+  }
   return(object)
 }
 
