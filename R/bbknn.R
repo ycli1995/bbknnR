@@ -401,15 +401,6 @@ query_annoy_tree <- function(query, ckd, k = 3) {
   return(list(index = index + 1L, dist = dist))
 }
 
-# fuzzy_simplicial_set
-#
-# Export fuzzy_simplicial_set() function from \code{uwot}
-#
-#' @import uwot
-#' @importFrom utils getFromNamespace
-#' 
-fuzzy_simplicial_set <- getFromNamespace(x = "fuzzy_simplicial_set", ns = "uwot")
-
 # Compute connectivities using UMAP
 # 
 # @param knn_index KNN index matrix
@@ -421,7 +412,8 @@ fuzzy_simplicial_set <- getFromNamespace(x = "fuzzy_simplicial_set", ns = "uwot"
 # nearest neighbors that should be assumed to be connected at a local level. 
 # @param seed Set a random seed. 
 #
-#' @import Matrix methods uwot dplyr
+#' @import Matrix methods dplyr
+#' @importFrom uwot umap
 #' @importFrom Rcpp evalCpp
 #'
 compute_connectivities_umap <- function(
@@ -437,11 +429,13 @@ compute_connectivities_umap <- function(
   if (!is.null(x = seed)) {
     set.seed(seed)
   }
-  cnts <- fuzzy_simplicial_set(
-    nn = list(idx = knn_index, dist = knn_dist),
+  cnts <- umap(
+    X = X,
+    nn_method = list(idx = knn_index, dist = knn_dist),
     set_op_mix_ratio = set_op_mix_ratio,
-    local_connectivity = local_connectivity
-  )
+    local_connectivity = local_connectivity,
+    n_epochs = 0, ret_extra = c("fgraph"), init = "random"
+  )$fgraph
   dist <- do.call(
     sparseMatrix, 
     c(GetSparseDist(knn_index, knn_dist, n_obs, n_neighbors), repr = "T", index1 = FALSE)
