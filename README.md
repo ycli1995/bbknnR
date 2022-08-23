@@ -31,6 +31,9 @@ panc8_small <- RunBBKNN(panc8_small, batch_key = "tech")
 ```
 
 ## Release
+### 1.0.1
+* Import public function `similarity_graph()` from `uwot==0.1.14` in `compute_connectivities_umap()` to follow the CRAN policy
+
 ### 1.0.0
 * Initially released to CRAN
 
