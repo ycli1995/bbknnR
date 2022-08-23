@@ -178,7 +178,9 @@ RunBBKNN.default <- function(
 #' @return Returns a Seurat object containing a new BBKNN Graph. If run t-SNE or UMAP, will 
 #' also return corresponded reduction objects.
 #' 
-#' @import Seurat SeuratObject uwot Rtsne
+#' @import Seurat SeuratObject
+#' @importFrom uwot umap
+#' @importFrom Rtsne Rtsne_neighbors
 #' 
 #' @rdname RunBBKNN
 #' @export
@@ -413,7 +415,7 @@ query_annoy_tree <- function(query, ckd, k = 3) {
 # @param seed Set a random seed. 
 #
 #' @import Matrix methods dplyr
-#' @importFrom uwot umap
+#' @importFrom uwot similarity_graph
 #' @importFrom Rcpp evalCpp
 #'
 compute_connectivities_umap <- function(
@@ -429,13 +431,12 @@ compute_connectivities_umap <- function(
   if (!is.null(x = seed)) {
     set.seed(seed)
   }
-  cnts <- umap(
+  cnts <- similarity_graph(
     X = X,
     nn_method = list(idx = knn_index, dist = knn_dist),
     set_op_mix_ratio = set_op_mix_ratio,
-    local_connectivity = local_connectivity,
-    n_epochs = 0, ret_extra = c("fgraph"), init = "random"
-  )$fgraph
+    local_connectivity = local_connectivity
+  )
   dist <- do.call(
     sparseMatrix, 
     c(GetSparseDist(knn_index, knn_dist, n_obs, n_neighbors), repr = "T", index1 = FALSE)
