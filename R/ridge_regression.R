@@ -35,7 +35,8 @@ RidgeRegression <- function(object, ...) {
 #' a seed.
 #' @param verbose Whether or not to print output to the console
 #' 
-#' @import glmnet tidytable
+#' @import glmnet
+#' @importFrom tidytable get_dummies.
 #' 
 #' @rdname RidgeRegression
 #' @method RidgeRegression default
