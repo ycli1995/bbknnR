@@ -60,12 +60,11 @@ RidgeRegression.default <- function(
   }
   mod <- get_dummies.(.df = latent_data)
   mod <- as.matrix(x = mod[, (ncol(latent_data) + 1):ncol(mod)])
-  batch_idx <- do.call(
-    `|`, lapply(
-      X = batch_key, 
-      FUN = function(x) startsWith(x = colnames(x = mod), prefix = x)
-    )
+  batch_idx <- sapply(
+    X = batch_key,
+    FUN = function(x) startsWith(x = colnames(x = mod), prefix = paste0(x, "_"))
   )
+  batch_idx <- Reduce(f = xor, x = batch_idx)
   mod_tech <- mod[, batch_idx]
   resid_data <- matrix(
     nrow = nrow(x = object),
