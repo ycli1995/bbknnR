@@ -31,6 +31,10 @@ panc8_small <- RunBBKNN(panc8_small, batch_key = "tech")
 ```
 
 ## Release
+### 1.1.0
+* Compatibility with Seurat v5
+* Improvements for documentation and verbose.
+
 ### 1.0.2
 * Explicit import of `get_dummies.()` from tidytable
 * Fix a bug when pass only one `batch_key` to `RidgeRegression()`

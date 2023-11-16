@@ -1,3 +1,6 @@
+#' @importFrom rlang %||%
+#' @importFrom magrittr %>%
+#' @importFrom Rcpp evalCpp
 #' @useDynLib bbknnR
 #' @keywords internal
 "_PACKAGE"

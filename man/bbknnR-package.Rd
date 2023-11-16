@@ -19,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Yuchen Li \email{liyuchen_1995@outlook.com}
+\strong{Maintainer}: Yuchen Li \email{ycli1995@outlook.com}
 
 }
 \keyword{internal}

@@ -7,7 +7,7 @@ using namespace Rcpp;
 using namespace std;
 
 template <int RTYPE>
-Matrix<RTYPE> UpdateMat(
+Matrix<RTYPE> update_mat(
     Matrix<RTYPE> raw_mat,
     const Matrix<RTYPE> new_mat,
     const IntegerVector row_idx,
@@ -24,27 +24,27 @@ Matrix<RTYPE> UpdateMat(
 }
 
 // [[Rcpp::export]]
-NumericMatrix UpdateNumMat(
+NumericMatrix update_num_mat(
     NumericMatrix & raw_mat,
     NumericMatrix & new_mat,
     IntegerVector & row_idx,
     IntegerVector & col_idx
 ) {
-  return UpdateMat(raw_mat, new_mat, row_idx, col_idx);
+  return update_mat(raw_mat, new_mat, row_idx, col_idx);
 }
 
 // [[Rcpp::export]]
-IntegerMatrix UpdateIntMat(
+IntegerMatrix update_int_mat(
     IntegerMatrix & raw_mat,
     IntegerMatrix & new_mat,
     IntegerVector & row_idx,
     IntegerVector & col_idx
 ) {
-  return UpdateMat(raw_mat, new_mat, row_idx, col_idx);
+  return update_mat(raw_mat, new_mat, row_idx, col_idx);
 }
 
 // [[Rcpp::export]]
-IntegerMatrix GetRawIndex(
+IntegerMatrix get_raw_indices(
     IntegerMatrix & idx_mat,
     IntegerVector & raw_idx
 ) {
@@ -59,7 +59,7 @@ IntegerMatrix GetRawIndex(
 }
 
 // [[Rcpp::export]]
-List GetSparseDist(
+List get_sparse_dist(
   IntegerMatrix & knn_index,
   NumericMatrix & knn_dist,
   int n_obs,
@@ -87,7 +87,7 @@ List GetSparseDist(
 }
 
 // [[Rcpp::export]]
-void Trimming(
+void trimming_cpp(
   NumericVector & x,
   IntegerVector & row_idx,
   IntegerVector & p,
