@@ -163,7 +163,7 @@ RunBBKNN.default <- function(
 #' @importFrom uwot umap
 #' @importFrom Rtsne Rtsne_neighbors
 #' @importFrom future nbrOfWorkers
-#' @importClassesFrom SeuratObject Seurat
+#' @importClassesFrom SeuratObject Graph Seurat
 #' 
 #' @rdname RunBBKNN
 #' @export
@@ -440,7 +440,7 @@ compute_connectivities_umap <- function(
   local_connectivity = 1.0,
   seed = 42
 ) {
-  X <- matrix(0, nrow = n_obs, ncol = 1)
+  X <- matrix(0, nrow = n_obs, ncol = 2)
   if (!is.null(x = seed)) {
     set.seed(seed)
   }

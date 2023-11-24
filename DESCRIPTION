@@ -1,7 +1,7 @@
 Package: bbknnR
 Title: Perform Batch Balanced KNN in R
 Version: 1.1.0
-Date: 2022-09-22
+Date: 2023-11-17
 Authors@R: person(given = "Yuchen", family = "Li", email = "ycli1995@outlook.com", role = c("aut", "cre"))
 Description: A fast and intuitive batch effect removal tool for single-cell data. BBKNN is originally used in the 'scanpy' python package, and now can be used with 'Seurat' seamlessly.
 License: MIT + file LICENSE
