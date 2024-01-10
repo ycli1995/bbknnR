@@ -15,7 +15,7 @@
 #' @param verbose Whether or not to print output to the console
 #' 
 #' @importFrom glmnet glmnet coef.glmnet
-#' @importFrom tidytable get_dummies.
+#' @importFrom tidytable get_dummies
 #' 
 #' @rdname RidgeRegression
 #' @export
@@ -37,7 +37,7 @@ RidgeRegression.default <- function(
   if (!is.null(x = seed)) {
     set.seed(seed = seed)
   }
-  mod <- get_dummies.(.df = latent_data)
+  mod <- get_dummies(.df = latent_data)
   mod <- as.matrix(x = mod[, (ncol(latent_data) + 1):ncol(mod)])
   batch_idx <- sapply(
     X = batch_key,
