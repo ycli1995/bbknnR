@@ -45,6 +45,7 @@ RunBBKNN(object, ...)
   UMAP_key = "UMAP_",
   min_dist = 0.3,
   spread = 1,
+  return.umap.model = FALSE,
   seed = 42,
   verbose = TRUE,
   ...
@@ -137,6 +138,8 @@ names. tSNE by default.}
 \item{min_dist}{Pass to 'min_dist' parameter for \code{\link[uwot]{umap}}}
 
 \item{spread}{Pass to 'spread' parameter for \code{\link[uwot]{umap}}}
+
+\item{return.umap.model}{Whether UMAP will return the uwot model}
 }
 \value{
 Returns a Seurat object containing a new BBKNN Graph. If run t-SNE or 

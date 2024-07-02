@@ -23,7 +23,7 @@ Imports:
     tidytable,
     uwot (>= 0.1.14)
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 URL: https://github.com/ycli1995/bbknnR, https://github.com/Teichlab/bbknn, https://bbknn.readthedocs.io/en/latest/
 BugReports: https://github.com/ycli1995/bbknnR/issues
 Suggests: 

@@ -154,12 +154,13 @@ RunBBKNN.default <- function(
 #' names. tSNE by default.
 #' @param min_dist Pass to 'min_dist' parameter for \code{\link[uwot]{umap}}
 #' @param spread Pass to 'spread' parameter for \code{\link[uwot]{umap}}
+#' @param return.umap.model Whether UMAP will return the uwot model
 #' 
 #' @return Returns a Seurat object containing a new BBKNN Graph. If run t-SNE or 
 #' UMAP, will also return corresponded reduction objects.
 #' 
 #' @importFrom SeuratObject as.Graph CreateDimReducObject DefaultAssay 
-#' Embeddings FetchData
+#' Embeddings FetchData Misc<-
 #' @importFrom uwot umap
 #' @importFrom Rtsne Rtsne_neighbors
 #' @importFrom future nbrOfWorkers
@@ -185,6 +186,7 @@ RunBBKNN.Seurat <- function(
   UMAP_key = "UMAP_",
   min_dist = 0.3,
   spread = 1,
+  return.umap.model = FALSE,
   seed = 42,
   verbose = TRUE,
   ...
@@ -223,8 +225,13 @@ RunBBKNN.Seurat <- function(
       set_op_mix_ratio = set_op_mix_ratio,
       local_connectivity = local_connectivity,
       min_dist = min_dist,
-      spread = spread
+      spread = spread,
+      ret_model = return.umap.model
     )
+    if (return.umap.model) {
+      umap.model <- umap
+      umap <- umap$embedding
+    }
     colnames(x = umap) <- paste0(UMAP_key, c(1, 2))
     rownames(x = umap) <- rownames(x = embeddings)
     object[[UMAP_name]] <- CreateDimReducObject(
@@ -232,6 +239,9 @@ RunBBKNN.Seurat <- function(
       assay = assay,
       key = UMAP_key
     )
+    if (return.umap.model) {
+      Misc(object[[UMAP_name]], slot = "model") <- umap.model
+    }
   }
   if (run_TSNE) {
     if (verbose) {
