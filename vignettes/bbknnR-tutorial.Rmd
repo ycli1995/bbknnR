@@ -32,7 +32,7 @@ panc8_small <- RunBBKNN(panc8_small, batch_key = "tech")
 
 ## Find Clusters using bbknn graph
 ```{r clustering}
-panc8_small <- FindClusters(panc8_small, graph.name = "bbknn")
+panc8_small <- FindClusters(panc8_small, graph.name = "RNA_bbknn")
 ```
 
 ## Visualization

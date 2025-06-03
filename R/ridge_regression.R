@@ -1,7 +1,20 @@
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# S3 methods ###################################################################
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#' Perform ridge regression on scaled expression data
+#' 
+#' Perform ridge regression on scaled expression data, accepting both technical 
+#' and biological categorical variables. The effect of the technical variables 
+#' is removed while the effect of the biological variables is retained. This is 
+#' a preprocessing step that can aid BBKNN integration.
+#' 
+#' @param object An object
+#' @param ... Arguments passed to other methods
+#' 
+#' @references Park, Jong-Eun, et al. "A cell atlas of human thymic development 
+#' defines T cell repertoire formation." Science 367.6480 (2020): eaay3224.
+#' 
+#' @name RidgeRegression
+#' @export RidgeRegression
+RidgeRegression <- function(object, ...) UseMethod('RidgeRegression', object)
 
 #' @param latent_data Extra data to regress out, should be cells x latent data
 #' @param batch_key Variables to regress out as technical effects. Must be 
@@ -15,7 +28,7 @@
 #' @param verbose Whether or not to print output to the console
 #' 
 #' @importFrom glmnet glmnet coef.glmnet
-#' @importFrom tidytable get_dummies.
+#' @importFrom tidytable get_dummies
 #' 
 #' @rdname RidgeRegression
 #' @export
@@ -34,21 +47,18 @@ RidgeRegression.default <- function(
   if (verbose) {
     message("Running ridge regression...")
   }
-  if (!is.null(x = seed)) {
-    set.seed(seed = seed)
+  if (!is.null(seed)) {
+    set.seed(seed)
   }
-  mod <- get_dummies.(.df = latent_data)
-  mod <- as.matrix(x = mod[, (ncol(latent_data) + 1):ncol(mod)])
+  mod <- get_dummies(.df = latent_data)
+  mod <- as.matrix(mod[, (ncol(latent_data) + 1):ncol(mod)])
   batch_idx <- sapply(
     X = batch_key,
     FUN = function(x) startsWith(x = colnames(x = mod), prefix = paste0(x, "_"))
   )
-  batch_idx <- Reduce(f = xor, x = batch_idx)
+  batch_idx <- Reduce(xor, batch_idx)
   mod_tech <- mod[, batch_idx]
-  resid_data <- matrix(
-    nrow = nrow(x = object),
-    ncol = ncol(x = object)
-  )
+  resid_data <- matrix(0, nrow = nrow(object), ncol = ncol(object))
   for (i in 1:nrow(x = object)) {
     fit <- glmnet(
       x = mod, 
@@ -59,14 +69,14 @@ RidgeRegression.default <- function(
       lambda = lambda,
       ...
     )
-    cf <- as.matrix(x = coef.glmnet(fit))[-1, ]
+    cf <- as.matrix(coef.glmnet(fit))[-1, ]
     cf <- cf[batch_idx]
     explained <- mod_tech %*% cf
     regression.mat <- object[i, ] - explained
     resid_data[i, ] <- regression.mat
   }
-  rownames(x = resid_data) <- rownames(x = object)
-  colnames(x = resid_data) <- colnames(x = object)
+  rownames(resid_data) <- rownames(object)
+  colnames(resid_data) <- colnames(object)
   return(resid_data)
 }
 
@@ -83,6 +93,10 @@ RidgeRegression.default <- function(
 #' expression data (TRUE by default)
 #' 
 #' @return Returns a Seurat object.
+#' 
+#' @examples
+#' data("panc8_small")
+#' panc8_small <- RidgeRegression(panc8_small, "tech", c("nCount_RNA"))
 #' 
 #' @importFrom Seurat RunPCA
 #' @importFrom SeuratObject DefaultAssay FetchData GetAssayData SetAssayData 
@@ -109,17 +123,17 @@ RidgeRegression.Seurat <- function(
   verbose = TRUE,
   ...
 ) {
-  assay <- assay %||% DefaultAssay(object = object)
-  features <- features %||% VariableFeatures(object = object, assay = assay)
+  assay <- assay %||% DefaultAssay(object)
+  features <- features %||% VariableFeatures(object, assay = assay)
   if (!any(c(run_pca, replace))) {
     warning(
       "At least one of 'run_pca' or 'replace' should be set up.\n", 
       "Return the original object", 
-      immediate. = TRUE
+      call. = FALSE, immediate. = TRUE
     )
     return(object)
   }
-  if (packageVersion(pkg = "Seurat") >= package_version(x = "5.0.0")) {
+  if (packageVersion("Seurat") >= package_version("5.0.0")) {
     data.expr <- GetAssayData(
       object = object, 
       assay = assay, 
@@ -132,9 +146,9 @@ RidgeRegression.Seurat <- function(
       slot = "scale.data"
     )
   }
-  features <- intersect(x = features, y = rownames(x = data.expr))
-  data.expr <- data.expr[features, ]
-  latent_data <- FetchData(object = object, vars = c(batch_key, confounder_key))
+  features <- intersect(features, rownames(data.expr))
+  data.expr <- data.expr[features, , drop = FALSE]
+  latent_data <- FetchData(object, vars = c(batch_key, confounder_key))
   data.resid <- RidgeRegression(
     object = data.expr,
     latent_data = latent_data,
@@ -149,7 +163,7 @@ RidgeRegression.Seurat <- function(
     if (verbose) {
       message("Replace original scale.data...")
     }
-    if (packageVersion(pkg = "Seurat") >= package_version(x = "5.0.0")) {
+    if (packageVersion("Seurat") >= package_version("5.0.0")) {
       object <- SetAssayData(
         object = object, 
         assay = assay, 
