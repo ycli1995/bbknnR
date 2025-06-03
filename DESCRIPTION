@@ -9,7 +9,6 @@ Encoding: UTF-8
 Depends: R (>= 4.1.0), methods, utils
 LinkingTo: 
     Rcpp (>= 1.0.8),
-    RcppAnnoy,
     RcppEigen
 Imports:
     future,
