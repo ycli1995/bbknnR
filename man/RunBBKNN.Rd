@@ -16,6 +16,7 @@ RunBBKNN(object, ...)
   method = c("annoy", "nndescent"),
   metric = "euclidean",
   n_trees = 10L,
+  k_build_nndescent = 30,
   trim = NULL,
   set_op_mix_ratio = 1,
   local_connectivity = 1,
@@ -96,6 +97,11 @@ The following metrics are only supported in \code{nndescent}:
 \item{n_trees}{The number of trees to use in the random projection forest. 
 More trees give higher precision when querying, at the cost of increased run 
 time and resource intensity.}
+
+\item{k_build_nndescent}{Used with nndescent neighbour identification. The 
+number of neighbours to include when building the approximate nearest 
+neighbors index and neighbor graph. More neighbours give higher precision 
+when querying, at the cost of increased run time and resource intensity.}
 
 \item{trim}{Trim the neighbours of each cell to these many top 
 connectivities. May help with population independence and improve the 

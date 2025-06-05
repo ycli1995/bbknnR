@@ -57,6 +57,10 @@ RunBBKNN <- function(object, ...) UseMethod('RunBBKNN', object)
 #' @param n_trees The number of trees to use in the random projection forest. 
 #' More trees give higher precision when querying, at the cost of increased run 
 #' time and resource intensity.
+#' @param k_build_nndescent Used with nndescent neighbour identification. The 
+#' number of neighbours to include when building the approximate nearest 
+#' neighbors index and neighbor graph. More neighbours give higher precision 
+#' when querying, at the cost of increased run time and resource intensity.
 #' @param trim Trim the neighbours of each cell to these many top 
 #' connectivities. May help with population independence and improve the 
 #' tidiness of clustering. The lower the value the more independent the 
@@ -82,6 +86,7 @@ RunBBKNN.matrix <- function(
     method = c("annoy", "nndescent"),
     metric = "euclidean",
     n_trees = 10L,
+    k_build_nndescent = 30,
     trim = NULL,
     set_op_mix_ratio = 1,
     local_connectivity = 1,
@@ -99,6 +104,7 @@ RunBBKNN.matrix <- function(
     metric = metric,
     n_trees = n_trees,
     trim = trim,
+    k_build_nndescent = k_build_nndescent,
     set_op_mix_ratio = set_op_mix_ratio,
     local_connectivity = local_connectivity,
     seed = seed,
@@ -277,6 +283,7 @@ run_bbknn <- function(
     method = c("annoy", "nndescent"),
     metric = "euclidean",
     n_trees = 10L,
+    k_build_nndescent = 30,
     trim = NULL,
     set_op_mix_ratio = 1,
     local_connectivity = 1,
@@ -321,7 +328,7 @@ run_bbknn <- function(
   if (any(!metric %in% .nnd_metrics) & method == "nndescent") {
     stop("Invalid kNN metric for 'nndescent': ", metric)
   }
-  knn_func <- switch(method, annoy = annoy_knn, nndescent = nndescent_knn)
+  
   
   my.lapply <- lapply
   if (nbrOfWorkers() > 1) {
@@ -339,14 +346,25 @@ run_bbknn <- function(
   all.nn <- my.lapply(batches, function(b) {
     data.idx <- which(batch_list == b)
     data <- pca[data.idx, ]
-    nn <- knn_func(
-      data = data, 
-      query = pca, 
-      k = neighbors_within_batch, 
-      metric = metric, 
-      n_trees = n_trees, 
-      ...
-    )
+    if (method == "annoy") {
+      nn <- annoy_knn(
+        data = data, 
+        query = pca, 
+        k = neighbors_within_batch, 
+        metric = metric, 
+        n_trees = n_trees, 
+        ...
+      )
+    } else {
+      nn <- nndescent_knn(
+        data = data, 
+        query = pca, 
+        k = neighbors_within_batch, 
+        metric = metric, 
+        k_build = k_build_nndescent,
+        ...
+      )
+    }
     nn$idx <- correct_idx_cpp(nn$idx, data.idx)
     nn
   })

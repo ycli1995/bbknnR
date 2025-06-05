@@ -55,20 +55,20 @@ nndescent_knn <- function(
     query = data, 
     k = 5,
     metric = "euclidean", 
-    n_trees = 50, 
     seed = 42,
     n_threads = 0,
+    k_build = 30,
     ...
 ) {
   metric <- match.arg(metric, .nnd_metrics)
   if (!is.null(seed)) {
     set.seed(seed)
   }
+  k_build <- min(k_build, nrow(data))
   ann <- rnnd_build(
     data = data, 
-    k = k, 
+    k = k_build, 
     metric = metric, 
-    n_trees = n_trees, 
     n_threads = n_threads,
     ...
   )

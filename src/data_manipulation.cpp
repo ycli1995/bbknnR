@@ -28,6 +28,9 @@ Eigen::SparseMatrix<double> trim_graph(
   // Find threshold for each column
   std::vector<double> thres(cnt.cols(), 0.0);
   for (size_t col = 0; col < cnt.outerSize(); ++col) {
+    if (cnt.col(col).nonZeros() <= trim) {
+      continue;
+    }
     double val;
     std::priority_queue<double, std::vector<double>, std::greater<double>> q;
     for (Eigen::SparseMatrix<double>::InnerIterator it(cnt, col); it; ++it){
