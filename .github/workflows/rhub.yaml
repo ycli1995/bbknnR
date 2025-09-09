@@ -22,7 +22,9 @@ on:
       id:
         description: 'Unique ID. You can leave this empty now.'
         type: string
-
+  push:
+    branches:
+      - main
 jobs:
 
   setup:
