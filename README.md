@@ -32,6 +32,9 @@ panc8_small <- RunBBKNN(panc8_small, batch_key = "tech")
 
 ## Release
 ### 2.0.1
+* Fix `trim <- trim %||% 10 * ncol(nn.idx)`. The correct code should be `trim <- trim %||% (10 * ncol(nn.idx))`. ([#10](https://github.com/ycli1995/bbknnR/issues/10))
+
+### 2.0.1
 * Add `k_build_nndescent = 30` parameter to match the implementation of python `bbknn`.
 
 ### 2.0.0

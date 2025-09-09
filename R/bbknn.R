@@ -374,7 +374,7 @@ run_bbknn <- function(
     nn.idx[i, ] <- nn.idx[i, ][order(nn.dist[i, ])]
     nn.dist[i, ] <- nn.dist[i, ][order(nn.dist[i, ])]
   }
-  trim <- trim %||% 10 * ncol(nn.idx)
+  trim <- trim %||% (10 * ncol(nn.idx))
   if (verbose) {
     message("Compute connectivity graph with 'trim = ", trim, "'")
   }
@@ -403,7 +403,7 @@ get_connectivities_umap <- function(
     trim = NULL,
     seed = 42
 ) {
-  trim <- trim %||% 10 * nrow(nn.idx)
+  trim <- trim %||% (10 * nrow(nn.idx))
   X <- matrix(0, nrow = nrow(nn.idx), ncol = 2)
   if (!is.null(seed)) {
     set.seed(seed)
